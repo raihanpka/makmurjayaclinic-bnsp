@@ -63,6 +63,24 @@
           </div>
 
           <div>
+            <label for="role" class="block text-sm font-medium text-gray-700">
+              Daftar Sebagai
+            </label>
+            <div class="mt-1">
+              <select id="role" name="role" required 
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>Pelanggan</option>
+                <option value="cashier" {{ old('role') == 'cashier' ? 'selected' : '' }}>Kasir</option>
+                <option value="pharmacist" {{ old('role') == 'pharmacist' ? 'selected' : '' }}>Apoteker</option>
+                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrator</option>
+              </select>
+              @if(flashMessages.has('errors.role'))
+                <p class="mt-2 text-sm text-red-600">{{ flashMessages.get('errors.role') }}</p>
+              @endif
+            </div>
+          </div>
+
+          <div>
             <label for="password" class="block text-sm font-medium text-gray-700">
               Password
             </label>

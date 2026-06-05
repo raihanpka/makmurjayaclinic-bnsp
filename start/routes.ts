@@ -77,13 +77,20 @@ const CartsController = () => import('#controllers/shop/carts_controller')
 const CheckoutsController = () => import('#controllers/shop/checkouts_controller')
 const OrdersController = () => import('#controllers/shop/orders_controller')
 
+const NotificationController = () => import('#controllers/notification_controller')
+
 router.group(() => {
   router.get('/catalog', [CatalogsController, 'index']).as('shop_catalog.index')
   router.get('/catalog/search', [CatalogsController, 'search']).as('shop_catalog.search')
   router.get('/catalog/:id', [CatalogsController, 'show']).as('shop_catalog.show')
 
-  // Cart, Checkout, and Order routes require authentication
+  // Auth required routes
   router.group(() => {
+    // Notifications
+    router.get('/api/notifications/sse', [NotificationController, 'sse']).as('notifications.sse')
+    router.get('/api/notifications', [NotificationController, 'index']).as('notifications.index')
+    router.post('/api/notifications/:id/read', [NotificationController, 'markAsRead']).as('notifications.read')
+
     router.get('/cart', [CartsController, 'index']).as('shop_cart.index')
     router.post('/cart', [CartsController, 'store']).as('shop_cart.store')
     router.patch('/cart/:id', [CartsController, 'update']).as('shop_cart.update')

@@ -1,6 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Order from '#models/order'
-import Drug from '#models/drug'
 import { DateTime } from 'luxon'
 import db from '@adonisjs/lucid/services/db'
 

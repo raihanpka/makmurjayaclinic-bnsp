@@ -14,12 +14,17 @@ export default class RegisteredUsersController {
       fullName: payload.fullName,
       email: payload.email,
       password: payload.password,
-      role: 'customer'
+      role: payload.role || 'customer'
     })
 
     await auth.use('web').login(user)
 
     session.flash('success', 'Registration successful. Welcome!')
+
+    if (user.role === 'admin') return response.redirect().toRoute('admin.dashboard')
+    if (user.role === 'pharmacist') return response.redirect().toRoute('pharmacy.dashboard')
+    if (user.role === 'cashier') return response.redirect().toRoute('cashier.dashboard')
+    
     return response.redirect().toRoute('shop_catalog.index')
   }
 }

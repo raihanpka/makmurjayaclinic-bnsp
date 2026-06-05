@@ -144,6 +144,29 @@ export class ErrorLogSchema extends BaseModel {
   declare stack: string | null
 }
 
+export class NotificationSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'isRead', 'link', 'message', 'title', 'type', 'updatedAt', 'userId'] as const
+  $columns = NotificationSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isRead: boolean | null
+  @column()
+  declare link: string | null
+  @column()
+  declare message: string
+  @column()
+  declare title: string
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number | null
+}
+
 export class OrderItemSchema extends BaseModel {
   static $columns = ['createdAt', 'drugId', 'id', 'orderId', 'priceAtSale', 'quantity', 'updatedAt'] as const
   $columns = OrderItemSchema.$columns

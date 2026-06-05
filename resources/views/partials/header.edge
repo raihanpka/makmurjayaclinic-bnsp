@@ -45,6 +45,33 @@
               Pesanan Saya
             </a>
             
+            <!-- Notifications Dropdown -->
+            <div x-data="notificationsComponent()" x-init="initSSE()" class="relative ml-3">
+              <button @click="open = !open; markAllAsReadLocally()" type="button" class="p-2 text-gray-400 hover:text-gray-500 relative inline-block focus:outline-none">
+                <span class="sr-only">Lihat notifikasi</span>
+                <i data-lucide="bell" class="h-6 w-6"></i>
+                <span x-show="unreadCount > 0" x-text="unreadCount" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full" x-cloak></span>
+              </button>
+
+              <div x-show="open" @click.away="open = false" x-transition class="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 border border-gray-100" style="display: none;">
+                <div class="px-4 py-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                  <h3 class="text-sm font-medium text-gray-900">Notifikasi</h3>
+                </div>
+                <div class="max-h-96 overflow-y-auto">
+                  <template x-for="notif in notifications" :key="notif.id">
+                    <a :href="notif.link || '#'" @click="markAsRead(notif.id)" class="block px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors" :class="{'bg-blue-50/30': !notif.isRead}">
+                      <p class="text-sm font-semibold text-gray-900" x-text="notif.title"></p>
+                      <p class="text-xs text-gray-500 mt-1" x-text="notif.message"></p>
+                      <p class="text-xs text-gray-400 mt-2" x-text="formatDate(notif.createdAt)"></p>
+                    </a>
+                  </template>
+                  <div x-show="notifications.length === 0" class="px-4 py-6 text-center text-sm text-gray-500">
+                    Belum ada notifikasi baru.
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Profile dropdown -->
             <div x-data="{ open: false }" class="relative ml-3">
               <div>

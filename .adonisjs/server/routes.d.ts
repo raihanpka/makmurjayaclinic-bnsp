@@ -57,6 +57,9 @@ export type ScannedRoutes = {
     'shop_catalog.index': { paramsTuple?: []; params?: {} }
     'shop_catalog.search': { paramsTuple?: []; params?: {} }
     'shop_catalog.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'notifications.sse': { paramsTuple?: []; params?: {} }
+    'notifications.index': { paramsTuple?: []; params?: {} }
+    'notifications.read': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'shop_cart.index': { paramsTuple?: []; params?: {} }
     'shop_cart.store': { paramsTuple?: []; params?: {} }
     'shop_cart.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -100,6 +103,8 @@ export type ScannedRoutes = {
     'shop_catalog.index': { paramsTuple?: []; params?: {} }
     'shop_catalog.search': { paramsTuple?: []; params?: {} }
     'shop_catalog.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'notifications.sse': { paramsTuple?: []; params?: {} }
+    'notifications.index': { paramsTuple?: []; params?: {} }
     'shop_cart.index': { paramsTuple?: []; params?: {} }
     'shop_checkout.show': { paramsTuple?: []; params?: {} }
     'shop_orders.index': { paramsTuple?: []; params?: {} }
@@ -139,6 +144,8 @@ export type ScannedRoutes = {
     'shop_catalog.index': { paramsTuple?: []; params?: {} }
     'shop_catalog.search': { paramsTuple?: []; params?: {} }
     'shop_catalog.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'notifications.sse': { paramsTuple?: []; params?: {} }
+    'notifications.index': { paramsTuple?: []; params?: {} }
     'shop_cart.index': { paramsTuple?: []; params?: {} }
     'shop_checkout.show': { paramsTuple?: []; params?: {} }
     'shop_orders.index': { paramsTuple?: []; params?: {} }
@@ -157,6 +164,7 @@ export type ScannedRoutes = {
     'pharmacy_prescriptions.verify': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'cashier_payments.confirm': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'cashier_counter.store': { paramsTuple?: []; params?: {} }
+    'notifications.read': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'shop_cart.store': { paramsTuple?: []; params?: {} }
     'shop_checkout.store': { paramsTuple?: []; params?: {} }
   }

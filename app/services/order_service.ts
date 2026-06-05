@@ -80,6 +80,21 @@ export default class OrderService {
       // Clear the cart
       await this.cartService.clearCart(user)
 
+      // Notify Admins
+      const Notification = (await import('#models/notification')).default
+      const UserModel = (await import('#models/user')).default
+      const admins = await UserModel.query({ client: trx }).whereIn('role', ['admin', 'pharmacist'])
+      
+      for (const admin of admins) {
+        await Notification.create({
+          userId: admin.id,
+          title: 'Pesanan Baru',
+          message: `Pesanan baru #${order.id} oleh ${user.fullName}. Total: Rp${totalPrice}`,
+          type: 'order',
+          link: `/admin/dashboard`
+        }, { client: trx })
+      }
+
       return order
     })
   }

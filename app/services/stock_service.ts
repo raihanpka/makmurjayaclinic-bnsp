@@ -54,6 +54,33 @@ export default class StockService {
         orderId: orderId || null,
         description: `Penjualan ${orderId ? 'Order #' + orderId : ''}`
       }, { client })
+
+      // Check for low stock
+      const result = await DrugBatch.query({ client })
+        .where('drug_id', drugId)
+        .where('expires_at', '>', DateTime.now().toSQL())
+        .sum('quantity as total')
+        .first()
+      const newStock = Number(result?.$extras.total || 0)
+
+      const Drug = (await import('#models/drug')).default
+      const drug = await Drug.findOrFail(drugId, { client })
+      
+      if (newStock < drug.minStock) {
+        const User = (await import('#models/user')).default
+        const Notification = (await import('#models/notification')).default
+        const admins = await User.query({ client }).whereIn('role', ['admin', 'pharmacist'])
+        
+        for (const admin of admins) {
+          await Notification.create({
+            userId: admin.id,
+            title: 'Stok Kritis',
+            message: `Stok obat ${drug.name} tersisa ${newStock} (Di bawah ambang batas ${drug.minStock}).`,
+            type: 'stock',
+            link: `/admin/drugs/${drug.id}`
+          }, { client })
+        }
+      }
     }
 
     if (trx) {

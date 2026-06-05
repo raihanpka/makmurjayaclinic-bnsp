@@ -113,6 +113,19 @@ Isi `.env` sesuai konfigurasi database dan Redis pada platform masing-masing (li
 
 ---
 
+### Akun Default (Login)
+
+Setelah melakukan *seeding*, Anda dapat login menggunakan kredensial berikut (semua password: `password123`):
+
+| Peran | Email |
+|---|---|
+| **Admin** | `admin@makmurjaya.id` |
+| **Apoteker** | `apoteker@makmurjaya.id` |
+| **Kasir** | `kasir@makmurjaya.id` |
+| **Pelanggan** | `johndoe@example.com` |
+
+---
+
 ### Mac
 
 1. Install Node.js via nvm dan tools pendukung:

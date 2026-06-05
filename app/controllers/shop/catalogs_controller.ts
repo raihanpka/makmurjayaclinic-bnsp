@@ -8,8 +8,17 @@ export default class CatalogsController {
     const limit = 12
     const categoryId = request.input('category')
     const sort = request.input('sort', 'name_asc')
+    const q = request.input('q')
 
     const query = Drug.query().where('is_active', true)
+
+    if (q) {
+      query.where((builder) => {
+        builder.where('name', 'ilike', `%${q}%`)
+          .orWhere('description', 'ilike', `%${q}%`)
+          .orWhere('sku', 'ilike', `%${q}%`)
+      })
+    }
 
     if (categoryId) {
       query.where('category_id', categoryId)

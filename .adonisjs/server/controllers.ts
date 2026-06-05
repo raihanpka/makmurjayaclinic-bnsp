@@ -23,6 +23,7 @@ export const controllers = {
     CounterSales: () => import('#controllers/cashier/counter_sales_controller'),
     Payments: () => import('#controllers/cashier/payments_controller'),
   },
+  Notification: () => import('#controllers/notification_controller'),
   pharmacy: {
     Prescriptions: () => import('#controllers/pharmacy/prescriptions_controller'),
   },

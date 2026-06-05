@@ -2,36 +2,39 @@ import { test } from '@japa/runner'
 import User from '#models/user'
 import Drug from '#models/drug'
 import DrugCategory from '#models/drug_category'
-import DrugBatch from '#models/drug_batch'
+import Order from '#models/order'
 import { DateTime } from 'luxon'
 
 test.group('Shop Checkout', (group) => {
-  test('customer can add to cart and checkout', async ({ client }) => {
+  group.each.setup(async () => {
+    // Clear database if needed
+  })
+
+  test('customer can add to cart and checkout', async ({ client, assert }) => {
+    const ts = Date.now()
     // 1. Setup Data
     const user = await User.create({
-      fullName: 'Test Customer',
-      email: 'customer@example.com',
+      fullName: 'Test Customer ' + ts,
+      email: `customer_${ts}@test.com`,
       password: 'password123',
       role: 'customer'
     })
 
-    const category = await DrugCategory.create({ name: 'General' })
+    const category = await DrugCategory.create({ name: 'Checkout Category ' + ts })
     const drug = await Drug.create({
-      name: 'Aspirin',
-      sku: 'ASP-001',
-      price: '5000',
+      name: 'Checkout Drug ' + ts,
+      sku: 'CHK-SKU-1-' + ts,
+      price: '50000',
       categoryId: category.id,
       isActive: true,
-      minStock: 10,
+      minStock: 5,
       requiresPrescription: false
     })
 
-    // Add stock batch
-    await DrugBatch.create({
-      drugId: drug.id,
-      batchNumber: 'B1',
-      quantity: 100,
-      expiresAt: DateTime.now().plus({ years: 1 })
+    await drug.related('batches').create({
+      batchNumber: 'B1-' + ts,
+      quantity: 10,
+      expiresAt: DateTime.now().plus({ months: 12 })
     })
 
     // 2. Add to cart
@@ -43,46 +46,52 @@ test.group('Shop Checkout', (group) => {
         quantity: 2
       })
 
-    // 3. Process Checkout
+    // 3. Checkout
     const response = await client
       .post('/shop/checkout')
       .loginAs(user)
       .form({
+        shippingAddress: '123 Test St',
         paymentMethod: 'transfer'
       })
 
-    // Should redirect to order success/detail page
+    const flash = response.session()
+    if (flash?.errors) console.log('FLASH ERROR 1:', flash.errors)
     response.assertStatus(302)
+
+    // 4. Verify Order created
+    const orders = await Order.query().where('user_id', user.id).preload('items')
+    assert.lengthOf(orders, 1)
     
-    // Verify order exists in DB
-    const order = await user.related('cart').query().first()
-    // Wait, cart should be cleared. Check order instead.
-    const orders = await user.related('auditLogs').query() // Or check orders table
-    // Let's just check the redirect destination matches the route pattern
+    const order = orders[0]
+    assert.equal(order.status, 'pending')
+    assert.equal(order.items.length, 1)
+    assert.equal(order.items[0].drugId, drug.id)
+    assert.equal(order.items[0].quantity, 2)
   })
 
   test('cannot checkout drug requiring prescription without file', async ({ client }) => {
+    const ts = Date.now()
     const user = await User.create({
-      fullName: 'Test Customer 2',
-      email: 'customer2@example.com',
+      fullName: 'Test Customer 2 ' + ts,
+      email: `customer2_${ts}@test.com`,
       password: 'password123',
       role: 'customer'
     })
 
-    const category = await DrugCategory.create({ name: 'Prescription' })
+    const category = await DrugCategory.create({ name: 'Prescription Category ' + ts })
     const drug = await Drug.create({
-      name: 'Amoxicillin',
-      sku: 'AMX-001',
-      price: '15000',
+      name: 'Rx Drug ' + ts,
+      sku: 'RX-SKU-1-' + ts,
+      price: '100000',
       categoryId: category.id,
       isActive: true,
-      minStock: 5,
+      minStock: 2,
       requiresPrescription: true
     })
 
-    await DrugBatch.create({
-      drugId: drug.id,
-      batchNumber: 'B2',
+    await drug.related('batches').create({
+      batchNumber: 'B-' + ts,
       quantity: 50,
       expiresAt: DateTime.now().plus({ months: 6 })
     })
@@ -95,11 +104,14 @@ test.group('Shop Checkout', (group) => {
       .post('/shop/checkout')
       .loginAs(user)
       .form({
-        paymentMethod: 'qris'
+        shippingAddress: '123 Test St',
+        paymentMethod: 'transfer'
       })
 
-    // Should show error message (flashed)
+    const flash = response.session()
+    if (flash?.errors) console.log('FLASH ERROR:', flash.errors)
+    
+    // Fallback assert just to see
     response.assertStatus(302)
-    // In Japa, we can check session if configured, but checking status is enough for now
   })
 })

@@ -1,7 +1,6 @@
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
 import Order from '#models/order'
-import Prescription from '#models/prescription'
 import mail from '@adonisjs/mail/services/main'
 import OrderStatusUpdatedNotification from '#mails/order_status_updated_notification'
 
