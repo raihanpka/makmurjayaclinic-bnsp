@@ -1,0 +1,100 @@
+@component('layouts/app')
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Verifikasi Resep - Order #{{ order.id }}</h1>
+      <a href="{{ route('pharmacy_prescriptions.index') }}" class="text-indigo-600 hover:text-indigo-500 font-medium">
+        &larr; Kembali ke Daftar
+      </a>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-12 lg:gap-x-12">
+      <div class="lg:col-span-7">
+        <!-- Prescription Image -->
+        <div class="bg-white border rounded-lg overflow-hidden mb-8 shadow-sm">
+          <div class="px-4 py-5 sm:px-6 border-b bg-gray-50">
+            <h3 class="text-lg font-medium text-gray-900">File Resep</h3>
+          </div>
+          <div class="p-4">
+            {{-- Assuming we have an endpoint to serve private files or we just show a link --}}
+            <div class="aspect-w-3 aspect-h-4 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
+              <p class="text-gray-500">File Resep: {{ order.prescription.filePath }}</p>
+              {{-- In real app, we would use a controller to serve this private file --}}
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="bg-white border rounded-lg overflow-hidden shadow-sm">
+          <div class="px-4 py-5 sm:px-6 border-b bg-gray-50">
+            <h3 class="text-lg font-medium text-gray-900">Obat yang Dipesan</h3>
+          </div>
+          <ul role="list" class="divide-y divide-gray-100">
+            @each(item in order.items)
+              <li class="px-4 py-4 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-900">{{ item.drug.name }}</p>
+                  <p class="text-xs text-gray-500">Kuantitas: {{ item.quantity }}</p>
+                  @if(item.drug.requiresPrescription)
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Perlu Resep</span>
+                  @endif
+                </div>
+              </li>
+            @end
+          </ul>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5">
+        <!-- Verification Form -->
+        <div class="bg-white border rounded-lg overflow-hidden shadow-sm sticky top-8">
+          <div class="px-4 py-5 sm:px-6 border-b bg-indigo-600">
+            <h3 class="text-lg font-medium text-white">Keputusan Apoteker</h3>
+          </div>
+          <div class="p-6">
+            <form action="{{ route('pharmacy_prescriptions.verify', { id: order.id }) }}" method="POST">
+              {{ csrfField() }}
+              
+              <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Status Verifikasi</label>
+                <div class="grid grid-cols-2 gap-4">
+                  <label class="relative flex items-center justify-center px-4 py-3 border rounded-md cursor-pointer focus:outline-none hover:bg-gray-50">
+                    <input type="radio" name="status" value="approve" class="sr-only" required>
+                    <span class="text-sm font-medium text-gray-900">Setujui</span>
+                  </label>
+                  <label class="relative flex items-center justify-center px-4 py-3 border rounded-md cursor-pointer focus:outline-none hover:bg-gray-50">
+                    <input type="radio" name="status" value="reject" class="sr-only" required>
+                    <span class="text-sm font-medium text-gray-900">Tolak</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="mb-6">
+                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
+                <textarea id="notes" name="notes" rows="4" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Berikan alasan jika ditolak atau catatan dosis tambahan..."></textarea>
+              </div>
+
+              <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-md font-bold hover:bg-indigo-700 transition-colors">
+                Simpan Verifikasi
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Customer Info -->
+        <div class="mt-8 bg-white border rounded-lg overflow-hidden shadow-sm">
+          <div class="px-4 py-5 sm:px-6 border-b bg-gray-50">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Informasi Pelanggan</h3>
+          </div>
+          <div class="p-6">
+            <p class="text-sm font-medium text-gray-900">{{ order.user.fullName }}</p>
+            <p class="text-sm text-gray-500">{{ order.user.email }}</p>
+            <div class="mt-4 pt-4 border-t">
+              <p class="text-xs text-gray-500 uppercase">Waktu Pesan</p>
+              <p class="text-sm text-gray-900">{{ order.createdAt.toFormat('dd LLL yyyy HH:mm') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+@end

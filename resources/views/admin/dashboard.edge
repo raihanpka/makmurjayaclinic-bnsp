@@ -1,0 +1,113 @@
+@component('layouts/app')
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Dashboard Admin</h1>
+      <p class="mt-2 text-sm text-gray-600">Selamat datang kembali! Berikut adalah ringkasan performa hari ini.</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-100">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">Pendapatan Hari Ini</dt>
+          <dd class="mt-1 text-3xl font-semibold text-indigo-600">Rp{{ stats.todayRevenue.toLocaleString('id-ID') }}</dd>
+        </div>
+      </div>
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-100">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">Pendapatan Bulan Ini</dt>
+          <dd class="mt-1 text-3xl font-semibold text-indigo-600">Rp{{ stats.monthlyRevenue.toLocaleString('id-ID') }}</dd>
+        </div>
+      </div>
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-100">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">Total Pesanan</dt>
+          <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ stats.totalOrders }}</dd>
+        </div>
+      </div>
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-100">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">Perlu Verifikasi</dt>
+          <dd class="mt-1 text-3xl font-semibold text-red-600">{{ stats.pendingVerification }}</dd>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Revenue Chart -->
+      <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-100 shadow-sm h-full flex flex-col">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Tren Pendapatan (7 Hari Terakhir)</h3>
+        <canvas id="revenueChart" height="150"></canvas>
+      </div>
+
+      <!-- Low Stock Alerts -->
+      <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm h-full flex flex-col">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Stok Kritis</h3>
+        <div class="flow-root flex-1">
+          <ul role="list" class="-my-5 divide-y divide-gray-100">
+            @each(drug in lowStockDrugs)
+              <li class="py-4">
+                <div class="flex items-center space-x-4">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ drug.name }}</p>
+                    <p class="text-sm text-gray-500 truncate">Threshold: {{ drug.min_stock }}</p>
+                  </div>
+                  <div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      Restock!
+                    </span>
+                  </div>
+                </div>
+              </li>
+            @else
+              <li class="py-10 text-center text-gray-500 text-sm italic">
+                Semua stok aman.
+              </li>
+            @end
+          </ul>
+        </div>
+        <div class="mt-6">
+          <a href="{{ route('admin_drugs.index') }}" class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Lihat Semua Obat
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{{ JSON.stringify(chartData.labels) }}},
+        datasets: [{
+          label: 'Pendapatan (Rp)',
+          data: {{{ JSON.stringify(chartData.data) }}},
+          borderColor: 'rgb(79, 70, 229)',
+          backgroundColor: 'rgba(79, 70, 229, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return 'Rp' + value.toLocaleString('id-ID');
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+@end

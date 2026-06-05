@@ -1,0 +1,79 @@
+@component('layouts/app')
+
+<div class="max-w-4xl mx-auto py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+  <div class="text-center">
+    <h1 class="text-4xl font-extrabold tracking-tight text-indigo-600 sm:text-5xl md:text-6xl">
+      <span class="block">Makmur Jaya</span>
+      <span class="block text-gray-600">Pharmacy &amp; Clinic</span>
+    </h1>
+    <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+      Layanan perawatan farmasi dan medis profesional. Akses katalog lengkap obat-obatan dan produk kesehatan kami secara online, dengan kualitas dan keaslian yang terjamin.
+    </p>
+    <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+      <div class="rounded-md shadow">
+        <a href="/shop/catalog" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg">
+          Jelajahi Katalog
+        </a>
+      </div>
+      <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+        <a href="/login" class="w-full flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg">
+          Login
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-24">
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="pt-6 h-full">
+        <div class="bg-white rounded-lg px-6 pb-8 shadow-sm border border-gray-100 h-full flex flex-col">
+          <div class="-mt-6 flex-grow">
+            <div>
+              <span class="inline-flex items-center justify-center p-3 bg-indigo-600 rounded-md shadow-lg text-white">
+                <i data-lucide="package" class="h-6 w-6"></i>
+              </span>
+            </div>
+            <h3 class="mt-8 text-lg font-medium text-indigo-600 tracking-tight">Inventaris Lengkap</h3>
+            <p class="mt-5 text-base text-gray-500">
+              Akses lebih dari 2.000 jenis obat, termasuk obat resep dokter, obat bebas, hingga alat kesehatan.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 h-full">
+        <div class="bg-white rounded-lg px-6 pb-8 shadow-sm border border-gray-100 h-full flex flex-col">
+          <div class="-mt-6 flex-grow">
+            <div>
+              <span class="inline-flex items-center justify-center p-3 bg-indigo-600 rounded-md shadow-lg text-white">
+                <i data-lucide="shield-check" class="h-6 w-6"></i>
+              </span>
+            </div>
+            <h3 class="mt-8 text-lg font-medium text-indigo-600 tracking-tight">Apoteker Terverifikasi</h3>
+            <p class="mt-5 text-base text-gray-500">
+              Setiap pesanan obat resep ditinjau dan diverifikasi dengan cermat oleh apoteker bersertifikat demi keselamatan Anda.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 h-full">
+        <div class="bg-white rounded-lg px-6 pb-8 shadow-sm border border-gray-100 h-full flex flex-col">
+          <div class="-mt-6 flex-grow">
+            <div>
+              <span class="inline-flex items-center justify-center p-3 bg-indigo-600 rounded-md shadow-lg text-white">
+                <i data-lucide="clock" class="h-6 w-6"></i>
+              </span>
+            </div>
+            <h3 class="mt-8 text-lg font-medium text-indigo-600 tracking-tight">Stok Real-time</h3>
+            <p class="mt-5 text-base text-gray-500">
+              Katalog digital kami terhubung langsung dengan inventaris fisik klinik, memastikan obat yang Anda pesan pasti tersedia.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@end

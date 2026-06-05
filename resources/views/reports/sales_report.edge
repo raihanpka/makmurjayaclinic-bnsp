@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Laporan Penjualan</title>
+  <style>
+    body { font-family: sans-serif; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .header { text-align: center; }
+    .summary { margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Makmur Jaya Pharmacy</h1>
+    <h2>Laporan Penjualan</h2>
+    <p>Periode: {{ startDate }} - {{ endDate }}</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID Order</th>
+        <th>Tanggal</th>
+        <th>Pelanggan</th>
+        <th>Total</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @each(order in orders)
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.createdAt.toFormat('dd LLL yyyy') }}</td>
+          <td>{{ order.user.fullName }}</td>
+          <td>Rp {{ Number(order.totalPrice).toLocaleString() }}</td>
+          <td>{{ order.status }}</td>
+        </tr>
+      @endeach
+    </tbody>
+  </table>
+
+  <div class="summary">
+    <p><strong>Total Pendapatan:</strong> Rp {{ totalRevenue.toLocaleString() }}</p>
+    <p><strong>Dicetak pada:</strong> {{ generatedAt }}</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+@component('layouts/app')
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Verifikasi Resep</h1>
+    </div>
+
+    @if(orders.length > 0)
+      <div class="bg-white shadow overflow-hidden sm:rounded-md border">
+        <ul role="list" class="divide-y divide-gray-100">
+          @each(order in orders)
+            <li>
+              <a href="{{ route('pharmacy_prescriptions.show', { id: order.id }) }}" class="block hover:bg-gray-50">
+                <div class="px-4 py-4 sm:px-6">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-medium text-indigo-600 truncate">
+                      Order #{{ order.id }} - {{ order.user.fullName }}
+                    </p>
+                    <div class="ml-2 flex-shrink-0 flex">
+                      <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        Menunggu Verifikasi
+                      </p>
+                    </div>
+                  </div>
+                  <div class="mt-2 sm:flex sm:justify-between">
+                    <div class="sm:flex">
+                      <p class="flex items-center text-sm text-gray-500">
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V8a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm-2 5V6a2 2 0 114 0v1H8zm1 4a1 1 0 10-2 0 1 1 0 002 0z" clip-rule="evenodd" />
+                        </svg>
+                        Dipesan pada {{ order.createdAt.toFormat('dd LLL yyyy HH:mm') }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </li>
+          @end
+        </ul>
+      </div>
+    @else
+      <div class="text-center py-20 bg-white rounded-lg border">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada resep baru</h3>
+        <p class="mt-1 text-sm text-gray-500">Semua resep telah diproses.</p>
+      </div>
+    @endif
+  </div>
+@end

@@ -1,0 +1,144 @@
+@component('layouts/app')
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Detail Pesanan #{{ order.id }}</h1>
+      <a href="{{ route('shop_orders.index') }}" class="text-indigo-600 hover:text-indigo-500 font-medium">
+        &larr; Kembali ke Riwayat
+      </a>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-12 lg:gap-x-12">
+      <div class="lg:col-span-8">
+        <!-- Status Banner -->
+        <div class="mb-8 p-6 rounded-lg border {{ order.status === 'cancelled' ? 'bg-red-50 border-red-200' : 'bg-indigo-50 border-indigo-200' }}">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              @if(order.status === 'completed')
+                <i data-lucide="check-circle-2" class="h-6 w-6 text-green-500"></i>
+              @elseif(order.status === 'cancelled')
+                <i data-lucide="x-circle" class="h-6 w-6 text-red-500"></i>
+              @else
+                <i data-lucide="clock" class="h-6 w-6 text-indigo-500"></i>
+              @endif
+            </div>
+            <div class="ml-3">
+              <h3 class="text-lg font-medium {{ order.status === 'cancelled' ? 'text-red-800' : 'text-indigo-800' }}">
+                Status: {{ order.status.toUpperCase() }}
+              </h3>
+              <div class="mt-2 text-sm {{ order.status === 'cancelled' ? 'text-red-700' : 'text-indigo-700' }}">
+                @if(order.status === 'pending_verification')
+                  <p>Pesanan Anda sedang dalam proses verifikasi resep oleh apoteker kami. Mohon tunggu maksimal 30 menit.</p>
+                @elseif(order.status === 'pending')
+                  <p>Pesanan telah dikonfirmasi. Silakan lakukan pembayaran sesuai instruksi di bawah.</p>
+                @elseif(order.status === 'processing')
+                  <p>Pembayaran telah diterima. Kami sedang menyiapkan obat-obatan Anda.</p>
+                @elseif(order.status === 'ready')
+                  <p>Pesanan Anda siap diambil di counter klinik atau sedang dalam pengiriman.</p>
+                @elseif(order.status === 'completed')
+                  <p>Transaksi selesai. Terima kasih telah berbelanja di Makmur Jaya Pharmacy.</p>
+                @elseif(order.status === 'cancelled')
+                  <p>Pesanan ini telah dibatalkan.</p>
+                @endif
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div class="bg-white border border-gray-100 rounded-lg overflow-hidden mb-8 shadow-sm">
+          <div class="px-4 py-5 sm:px-6 border-b">
+            <h3 class="text-lg font-medium text-gray-900">Daftar Obat</h3>
+          </div>
+          <ul role="list" class="divide-y divide-gray-100">
+            @each(item in order.items)
+              <li class="px-4 py-4 flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 w-16 h-16 border rounded-md overflow-hidden bg-gray-50">
+                    @if(item.drug.imageUrl)
+                      <img src="{{ item.drug.imageUrl.startsWith('http') ? item.drug.imageUrl : '/uploads/' + item.drug.imageUrl }}" alt="{{ item.drug.name }}" class="w-full h-full object-center object-cover">
+                    @else
+                      <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50 border border-gray-100">
+                        <i data-lucide="image-off" class="h-6 w-6"></i>
+                      </div>
+                    @endif
+                  </div>
+                  <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-900">{{ item.drug.name }}</p>
+                    <p class="text-xs text-gray-500">Rp{{ Number(item.priceAtSale).toLocaleString('id-ID') }} x {{ item.quantity }}</p>
+                  </div>
+                </div>
+                <p class="text-sm font-medium text-gray-900">Rp{{ (Number(item.priceAtSale) * item.quantity).toLocaleString('id-ID') }}</p>
+              </li>
+            @end
+          </ul>
+          <div class="px-4 py-4 bg-gray-50 flex justify-between">
+            <span class="text-base font-bold text-gray-900">Total</span>
+            <span class="text-base font-bold text-indigo-600">Rp{{ Number(order.totalPrice).toLocaleString('id-ID') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-4 space-y-8">
+        <!-- Payment Info -->
+        <div class="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
+          <div class="px-4 py-5 sm:px-6 border-b bg-gray-50">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Info Pembayaran</h3>
+          </div>
+          <div class="p-6">
+            <div class="mb-4">
+              <p class="text-xs text-gray-500 uppercase">Metode</p>
+              <p class="text-sm font-medium text-gray-900">{{ order.payment.method.toUpperCase() }}</p>
+            </div>
+            <div class="mb-4">
+              <p class="text-xs text-gray-500 uppercase">Status Pembayaran</p>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                {{ order.payment.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                {{ order.payment.status.toUpperCase() }}
+              </span>
+            </div>
+            
+            @if(order.payment.status === 'pending' && order.status === 'pending')
+              <div class="mt-6 border-t pt-4">
+                <p class="text-sm text-gray-600 mb-4">Silakan transfer ke rekening berikut:</p>
+                <div class="bg-gray-50 p-3 rounded text-sm font-mono">
+                  Bank Mandiri: 123-456-7890<br>
+                  A.N. Klinik Makmur Jaya
+                </div>
+                <p class="text-xs text-gray-500 mt-2 italic">*Kirim bukti transfer ke WhatsApp admin kami untuk proses lebih cepat.</p>
+              </div>
+            @endif
+          </div>
+        </div>
+
+        <!-- Prescription Info -->
+        @if(order.prescription)
+          <div class="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
+            <div class="px-4 py-5 sm:px-6 border-b bg-gray-50">
+              <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Resep Dokter</h3>
+            </div>
+            <div class="p-6 text-center">
+              <div class="mb-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                  {{ order.prescription.status === 'approved' ? 'bg-green-100 text-green-800' : '' }}
+                  {{ order.prescription.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                  {{ order.prescription.status === 'rejected' ? 'bg-red-100 text-red-800' : '' }}
+                ">
+                  {{ order.prescription.status.toUpperCase() }}
+                </span>
+              </div>
+              
+              @if(order.prescription.pharmacistNotes)
+                <div class="text-left bg-gray-50 p-3 rounded mb-4">
+                  <p class="text-xs text-gray-500 uppercase mb-1">Catatan Apoteker:</p>
+                  <p class="text-sm text-gray-700 italic">"{{ order.prescription.pharmacistNotes }}"</p>
+                </div>
+              @endif
+
+              <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium">Lihat Resep yang Diunggah</a>
+            </div>
+          </div>
+        @endif
+      </div>
+    </div>
+  </div>
+@end

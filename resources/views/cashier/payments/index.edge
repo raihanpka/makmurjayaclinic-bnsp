@@ -1,0 +1,41 @@
+@component('layouts/app')
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Konfirmasi Pembayaran</h1>
+
+    @if(orders.length > 0)
+      <div class="bg-white shadow overflow-hidden sm:rounded-md border">
+        <ul role="list" class="divide-y divide-gray-100">
+          @each(order in orders)
+            <li class="px-4 py-4 sm:px-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-indigo-600 truncate">
+                    Order #{{ order.id }} - {{ order.user.fullName }}
+                  </p>
+                  <p class="text-xs text-gray-500">Total: Rp{{ Number(order.totalPrice).toLocaleString('id-ID') }}</p>
+                  <p class="text-xs text-gray-500">Metode: {{ order.payment.method.toUpperCase() }}</p>
+                </div>
+                <div class="flex gap-2">
+                  <form action="{{ route('cashier_payments.confirm', { id: order.id }) }}" method="POST">
+                    {{ csrfField() }}
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                      Konfirmasi
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </li>
+          @end
+        </ul>
+      </div>
+    @else
+      <div class="text-center py-20 bg-white rounded-lg border">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada pembayaran tertunda</h3>
+        <p class="mt-1 text-sm text-gray-500">Semua pembayaran telah dikonfirmasi.</p>
+      </div>
+    @endif
+  </div>
+@end

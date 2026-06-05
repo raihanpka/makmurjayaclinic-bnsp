@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title || 'Makmur Jaya Pharmacy' }}</title>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased min-h-screen flex flex-col">
+  @include('partials/header')
+
+  <main class="flex-grow">
+    @if(flashMessages.has('success') || flashMessages.has('error'))
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        @if(flashMessages.has('success'))
+          <div x-data="alert" x-cloak x-show="isVisible" class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{{ flashMessages.get('success') }}</span>
+          </div>
+        @endif
+
+        @if(flashMessages.has('error'))
+          <div x-data="alert" x-cloak x-show="isVisible" class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{{ flashMessages.get('error') }}</span>
+          </div>
+        @endif
+      </div>
+    @endif
+
+    {{{ await $slots.main() }}}
+  </main>
+
+  <footer class="bg-white border-t border-gray-100 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <p class="text-center text-sm text-gray-500">&copy; {{ new Date().getFullYear() }} Klinik Makmur Jaya. Hak cipta dilindungi.</p>
+    </div>
+  </footer>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
