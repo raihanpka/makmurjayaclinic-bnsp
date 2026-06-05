@@ -330,8 +330,8 @@ Gunakan perintah berikut untuk mempermudah pengembangan dan operasional sistem:
 
 ## Dokumentasi
 
-- [AGENTS.md](docs/AGENTS.md) - Panduan untuk AI agent yang bekerja di repositori ini
-- [PRD.md](docs/PRD.md) - Product Requirements Document dan roadmap pengembangan
+- [Non Functional Requirements Document](Dokumentasi_Kebutuhan_Non_Fungsional.pdf) - Dokumen kebutuhan non fungsional
+- [PRD.md](docs/PRD.md) - Dokumen kebutuhan fungsional dan roadmap pengembangan
 
 ---
 
