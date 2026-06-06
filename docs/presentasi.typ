@@ -9,7 +9,6 @@
     subtitle: [Presentasi Uji Kompetensi (BNSP)],
     author: [Raihan Putra Kirana],
     date: datetime.today(),
-    institution: [Klinik Makmur Jaya],
   ),
 )
 
@@ -42,15 +41,15 @@
 
   #v(0.5em)
   #set text(size: 18pt)
-  #emph[Membangun ekosistem e-commerce untuk mempermudah transaksi daring, integrasi POS offline, dan automasi pengawasan stok obat.]
+  #emph[Membangun ekosistem e-commerce untuk mempermudah transaksi daring, integrasi POS _offline_, dan automasi pengawasan stok obat.]
 ]
 
 == Solusi & Fitur Cerdas
 
 - *Manajemen Inventaris Berbasis Waktu*: Mengadopsi algoritma _First-In-First-Out (FIFO)_ dengan pelacakan waktu kedaluwarsa secara mandiri per-_batch_ produksi.
 - *Validasi Resep Dokter Digital*: Intervensi _Apoteker_ meninjau unggahan resep pasien secara silang sebelum gerbang pembayaran dibuka.
-- *Notifikasi _Real-Time_ (In-App)*: Pemberitahuan seketika untuk pesanan baru maupun limitasi stok minimum tanpa perlu menyegarkan (*refresh*) halaman (via *SSE*).
-- *Background Task Worker*: Komputasi beban tinggi (Impor ribuan file Excel & laporan PDF) dioper ke latar belakang supaya web tidak *lemot*.
+- *Notifikasi _Real-Time_ (In-App)*: Pemberitahuan seketika untuk pesanan baru maupun limitasi stok minimum tanpa perlu menyegarkan (_refresh_) halaman (via *SSE*).
+- *Background Task Worker*: Komputasi beban tinggi (Impor ribuan file Excel & laporan PDF) dioper ke latar belakang supaya peladen (server) tidak lamban.
 
 = Arsitektur & Teknologi
 
@@ -84,7 +83,7 @@
   ],
   [
     *2. Controller (Otak)*
-    - Penerima _request_ jalur masuk (Router).
+    - Penerima permintaan (_request_) jalur masuk (Router).
     - Memfilter keamanan input pengguna via validator *VineJS*.
   ],
   [
@@ -113,13 +112,13 @@ Modul notifikasi lonceng lonceng dibangun menggunakan sistem *Server-Sent Events
   [*Metrik Bandingan*], [*WebSockets*], [*Server-Sent Events (SSE)*],
   [Arah Komunikasi], [Dua arah bolak-balik], [*Satu arah tunggal* (Server $arrow$ Klien)],
   [Konsumsi _Resource_], [Beban soket TCP sangat berat], [*Ringan* (Beroperasi di atas protokol HTTP)],
-  [Relevansi Kasus], [Cocok untuk gim mabar / Obrolan], [*Sangat cocok untuk sebaran peringatan / bel*],
+  [Relevansi Kasus], [Aplikasi obrolan (_chat_)], [*Sangat cocok untuk sebaran peringatan / bel*],
   [Kesimpulan], [Abaikan (Overkill)], [*✓ Dipilih & Diimplementasikan*],
 )
 
 == Integritas Stok & Mitigasi Race Condition
 
-Sistem memecahkan problematika _Race Condition_ (Eror tatkala dua pembeli merebut 1 produk yang sama persis dalam hitungan milidetik):
+Sistem memecahkan problematika _Race Condition_ (Galat sistem tatkala dua pembeli berebut satu produk yang sama persis dalam hitungan milidetik):
 
 1. *Locking (Gembok Tabel)*: Memanfaatkan fitur bawaan `.forUpdate()` di dalam *PostgreSQL*. Sistem akan "meminta izin antre" saat baris tabel sedang dieksekusi transaksinya oleh kasir lain.
 2. *Synchronous Database Transaction*: Pemotongan jumlah (_Quantity_) dilakukan berbarengan *secara absolut* dengan pencatatan nota pesanan via blok pengaman `db.transaction()`.
@@ -128,7 +127,8 @@ Sistem memecahkan problematika _Race Condition_ (Eror tatkala dua pembeli merebu
 == Visualisasi Arsitektur & Topologi
 
 #align(center)[
-  #image("diagram-architecture.png", fit: "contain", width: 85%)
+  // #image("diagram-architecture.png", fit: "contain", width: 85%)
+  [Gambar Diagram Arsitektur (Mohon letakkan kembali file diagram-architecture.png di dalam folder docs)]
 ]
 
 == Topologi Deployment Sekali Jalan (All-in-One)
@@ -148,6 +148,49 @@ Seluruh ekosistem layanan digabungkan ke dalam 1 bundel rapi lewat konfigurasi `
 
 *Keunggulan Multi-Stage*: Hanya membutuhkan satu *image* Alpine minimalis. Tidak perlu Node.js utuh di server produksi, murni tereksekusi tanpa hak akses _root_ demi keamanan militer.
 
+= Spesifikasi & Pengamanan
+
+== Kebutuhan Spesifikasi Server
+
+Sistem dikalkulasikan untuk menangani ribuan akses serentak (_concurrent_):
+
+#table(
+  columns: (auto, auto, 1fr),
+  inset: 6pt,
+  align: left,
+  stroke: 0.5pt + gray,
+  [*Komponen*], [*Spek Minimal*], [*Justifikasi*],
+  [Web Server], [4 vCPU, 4GB RAM], [Rendering SSR Edge.js & sinkronisasi keranjang belanja.],
+  [Database], [4 vCPU, 8GB RAM], [Modul `pg_trgm` (Fuzzy Search) memakan _shared buffers_ RAM yang besar.],
+  [Network], [1 Gbps Uplink], [Pemuatan gambar resolusi tinggi tanpa *bottleneck*.],
+)
+
+== Lapisan Pengamanan (_Security_)
+
+1. *Isolasi Sub-Jaringan (VPC)*: Port DB `5432` dan Redis `6379` ditutup dari akses internet publik.
+2. *Enkripsi Penyimpanan Sensitif*: Kata sandi pengguna dilindungi _hashing_ tingkat militer *Argon2id*.
+3. *Web Application Firewall (WAF)*: Nginx dilengkapi _Rate Limiting_ untuk menangkis serangan DoS/DDoS.
+4. *Proteksi CSRF & XSS*: Semua input formulir web difilter ketat oleh komponen `@adonisjs/shield`.
+
+= Strategi Migrasi & Skalabilitas
+
+== Rencana Migrasi & Cutover
+
+Proses peralihan dari _spreadsheet_ ke platform PostgreSQL tanpa merusak jam operasional:
+
+- *Automasi Impor Data*: Ekstraksi Excel/CSV via pustaka `SheetJS` berjalan di _background worker_ agar bebas dari _server timeout_.
+- *Timeline Cutover*: 
+  - H-7: Pelatihan _User Acceptance Testing_ (UAT) untuk Staf.
+  - H-1: _Freeze_ pencatatan _offline_.
+  - Hari H: Rilis resmi integrasi modul POS Kasir.
+
+== Skalabilitas (Blue-Green Deployment)
+
+Pembaruan perangkat lunak (_software update_) di masa depan dirancang dengan jaminan *Zero Downtime*:
+
+- *Stateless Application*: Sesi _login_ tidak diikat ke satu server, melainkan didelegasikan tunggal ke *Redis*. Server Web dapat digandakan (_Horizontal Scaling_) tanpa putus koneksi.
+- *Rilis Berkelanjutan*: Dua set kontainer berjalan bergantian (*Blue* & *Green*). _Load Balancer_ memutar trafik ke versi baru hanya bila status _health-check_ TypeScript lulus 100%.
+
 == Penutup
 
 #align(center + horizon)[
@@ -155,10 +198,5 @@ Seluruh ekosistem layanan digabungkan ke dalam 1 bundel rapi lewat konfigurasi `
   Terima Kasih
 
   #set text(size: 20pt, weight: "regular")
-  Sistem E-Commerce "Klinik Makmur Jaya" 
-  #linebreak()
-  Telah Lulus Pengujian dan Siap Diproduksi.
-
-  #v(1em)
-  Sesi Pertanyaan & Tinjauan Asesor?
+  Raihan Putra Kirana (IPB University)
 ]
