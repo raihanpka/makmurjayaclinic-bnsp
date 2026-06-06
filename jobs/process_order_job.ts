@@ -1,7 +1,7 @@
 import { inject } from '@adonisjs/core'
 import { Job } from '@rlanz/bull-queue'
 import Order from '#models/order'
-import StockService from '#services/stock_service'
+
 import db from '@adonisjs/lucid/services/db'
 
 type Payload = {
@@ -10,7 +10,7 @@ type Payload = {
 
 @inject()
 export default class ProcessOrderJob extends Job {
-  constructor(private readonly stockService: StockService) {
+  constructor() {
     super()
   }
 
@@ -25,10 +25,7 @@ export default class ProcessOrderJob extends Job {
     const order = await Order.query().where('id', payload.orderId).preload('items').firstOrFail()
 
     await db.transaction(async (trx) => {
-      // Deduct stock for each item in the order (using FIFO)
-      for (const item of order.items) {
-        await this.stockService.deductFromSale(item.drugId, item.quantity, order.id, trx)
-      }
+      // Stock is already deducted in OrderService.confirmPayment safely
 
       // Update order status to ready (or whatever is next in flow)
       order.useTransaction(trx)

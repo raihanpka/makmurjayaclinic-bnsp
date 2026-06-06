@@ -105,6 +105,7 @@ export default class OrderService {
   async confirmPayment(orderId: number, proofPath?: string): Promise<Order> {
     const order = await Order.findOrFail(orderId)
     await order.load('payment')
+    await order.load('items')
 
     if (order.status !== 'pending') {
       throw new Error('Hanya pesanan dengan status pending yang dapat dikonfirmasi pembayarannya.')
@@ -117,6 +118,11 @@ export default class OrderService {
       if (proofPath) payment.proofPath = proofPath
       await payment.save()
 
+      // Deduct stock safely within transaction to prevent race conditions
+      for (const item of order.items) {
+        await this.stockService.deductFromSale(item.drugId, item.quantity, order.id, trx)
+      }
+
       order.useTransaction(trx)
       order.status = 'processing'
       await order.save()
@@ -125,7 +131,7 @@ export default class OrderService {
     // Send notification
     await mail.send(new OrderStatusUpdatedNotification(order))
 
-    // Dispatch background job for stock update and further processing
+    // Dispatch background job for further processing (if any other heavy tasks exist)
     await queue.dispatch(ProcessOrderJob, { orderId: order.id })
 
     return order

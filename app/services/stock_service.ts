@@ -95,8 +95,11 @@ export default class StockService {
    */
   async addStock(drugId: number, quantity: number, batchNumber: string, expiresAt: DateTime): Promise<void> {
     await db.transaction(async (trx) => {
+      // Lock the drug row to prevent concurrent race condition on batch creation
+      const Drug = (await import('#models/drug')).default
+      await Drug.query({ client: trx }).where('id', drugId).forUpdate().first()
+
       // Create or update batch
-      // For simplicity, we always create a new batch record for each restock or update if batch number matches
       const existingBatch = await DrugBatch.query({ client: trx })
         .where('drug_id', drugId)
         .where('batch_number', batchNumber)

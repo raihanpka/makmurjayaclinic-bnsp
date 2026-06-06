@@ -31,6 +31,9 @@ export default class CartService {
     // For now, just add to cart.
     
     await db.transaction(async (trx) => {
+      // Lock cart row to prevent concurrent race condition causing duplicate items
+      await Cart.query({ client: trx }).where('id', cart.id).forUpdate().first()
+
       const existingItem = await CartItem.query({ client: trx })
         .where('cart_id', cart.id)
         .where('drug_id', drugId)

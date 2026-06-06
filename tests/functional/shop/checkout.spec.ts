@@ -49,6 +49,7 @@ test.group('Shop Checkout', (group) => {
     // 3. Checkout
     const response = await client
       .post('/shop/checkout')
+      .redirects(0)
       .loginAs(user)
       .form({
         shippingAddress: '123 Test St',
@@ -102,6 +103,7 @@ test.group('Shop Checkout', (group) => {
     // Checkout without file
     const response = await client
       .post('/shop/checkout')
+      .redirects(0)
       .loginAs(user)
       .form({
         shippingAddress: '123 Test St',
