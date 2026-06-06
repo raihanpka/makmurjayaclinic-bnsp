@@ -1,18 +1,25 @@
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import CartService from '#services/cart_service'
-import { addToCartValidator, updateCartValidator } from '#validators/shop/cart'
+import StockService from '#services/stock_service'
+import { addToCartValidator, updateCartValidator, bulkUpdateCartValidator } from '#validators/shop/cart'
 
 @inject()
 export default class CartsController {
   constructor(private readonly cartService: CartService) {}
 
-  async index({ view, auth }: HttpContext) {
+  @inject()
+  async index({ view, auth }: HttpContext, stockService: StockService) {
     const user = auth.user!
     const cart = await this.cartService.getCart(user)
     const total = this.cartService.calculateTotal(cart)
 
-    return view.render('shop/cart/index', { cart, total })
+    const stocks: Record<number, number> = {}
+    for (const item of cart.items) {
+      stocks[item.id] = await stockService.getSummary(item.drugId)
+    }
+
+    return view.render('shop/cart/index', { cart, total, stocks })
   }
 
   async store({ request, response, auth, session }: HttpContext) {
@@ -35,6 +42,26 @@ export default class CartsController {
 
     await this.cartService.updateItem(user, params.id, payload.quantity)
     session.flash('success', 'Keranjang berhasil diperbarui.')
+    
+    return response.redirect().back()
+  }
+
+  async bulkUpdate({ request, response, auth, session }: HttpContext) {
+    const user = auth.user!
+    const { items } = await request.validateUsing(bulkUpdateCartValidator)
+
+    try {
+      for (const item of items) {
+        if (item.quantity === 0) {
+          await this.cartService.removeItem(user, item.id)
+        } else {
+          await this.cartService.updateItem(user, item.id, item.quantity)
+        }
+      }
+      session.flash('success', 'Keranjang berhasil diperbarui.')
+    } catch (error: any) {
+      session.flash('error', error.message || 'Gagal memperbarui keranjang.')
+    }
     
     return response.redirect().back()
   }

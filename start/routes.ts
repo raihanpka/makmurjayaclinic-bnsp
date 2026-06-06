@@ -86,20 +86,25 @@ router.group(() => {
 
   // Auth required routes
   router.group(() => {
-    // Notifications
+    // Notifications (accessible by all auth users)
     router.get('/api/notifications/sse', [NotificationController, 'sse']).as('notifications.sse')
     router.get('/api/notifications', [NotificationController, 'index']).as('notifications.index')
     router.post('/api/notifications/:id/read', [NotificationController, 'markAsRead']).as('notifications.read')
 
-    router.get('/cart', [CartsController, 'index']).as('shop_cart.index')
-    router.post('/cart', [CartsController, 'store']).as('shop_cart.store')
-    router.patch('/cart/:id', [CartsController, 'update']).as('shop_cart.update')
-    router.delete('/cart/:id', [CartsController, 'destroy']).as('shop_cart.destroy')
+    // Customer-only routes
+    router.group(() => {
+      router.get('/cart', [CartsController, 'index']).as('shop_cart.index')
+      router.post('/cart', [CartsController, 'store']).as('shop_cart.store')
+      router.post('/cart/bulk-update', [CartsController, 'bulkUpdate']).as('shop_cart.bulk_update')
+      router.patch('/cart/:id', [CartsController, 'update']).as('shop_cart.update')
+      router.delete('/cart/:id', [CartsController, 'destroy']).as('shop_cart.destroy')
 
-    router.get('/checkout', [CheckoutsController, 'show']).as('shop_checkout.show')
-    router.post('/checkout', [CheckoutsController, 'store']).as('shop_checkout.store')
+      router.get('/checkout', [CheckoutsController, 'show']).as('shop_checkout.show')
+      router.post('/checkout', [CheckoutsController, 'store']).as('shop_checkout.store')
 
-    router.get('/orders', [OrdersController, 'index']).as('shop_orders.index')
-    router.get('/orders/:id', [OrdersController, 'show']).as('shop_orders.show')
+      router.get('/orders', [OrdersController, 'index']).as('shop_orders.index')
+      router.get('/orders/:id', [OrdersController, 'show']).as('shop_orders.show')
+    }).use(middleware.role(['customer']))
+
   }).use(middleware.auth())
 }).prefix('/shop')

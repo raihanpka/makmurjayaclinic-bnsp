@@ -11,7 +11,7 @@ export default class SessionsController {
     const { email, password, remember } = await request.validateUsing(loginValidator)
 
     const user = await User.verifyCredentials(email, password)
-    await auth.use('web').login(user, !!remember)
+    await auth.use('web').login(user)
 
     session.flash('success', 'Logged in successfully')
     

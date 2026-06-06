@@ -89,19 +89,40 @@
             </div>
           @endif
 
-          <form action="{{ route('shop_cart.store') }}" method="POST" class="flex-1">
-            {{ csrfField() }}
-            <input type="hidden" name="drugId" value="{{ drug.id }}">
-            <div class="flex gap-4">
-              <div class="w-24">
-                <label for="quantity" class="sr-only">Jumlah</label>
-                <input type="number" name="quantity" id="quantity" value="1" min="1" max="100" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+          @if(!auth.user || auth.user.isCustomer)
+            <form action="{{ route('shop_cart.store') }}" method="POST" class="flex-1">
+              {{ csrfField() }}
+              <input type="hidden" name="drugId" value="{{ drug.id }}">
+              <div class="flex flex-col gap-2">
+                <p class="text-sm font-medium {{ stock > 0 ? 'text-green-600' : 'text-red-600' }}">
+                  Status Stok: {{ stock > 0 ? stock + ' Tersedia' : 'Habis' }}
+                </p>
+                <div class="flex gap-4 items-center">
+                  <div class="w-24">
+                    <label for="quantity" class="sr-only">Jumlah</label>
+                    <input type="number" name="quantity" id="quantity" value="{{ stock > 0 ? 1 : 0 }}" min="{{ stock > 0 ? 1 : 0 }}" max="{{ stock }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" {{ stock === 0 ? 'disabled' : '' }}>
+                  </div>
+                  <button type="submit" class="flex-1 bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed" {{ stock === 0 ? 'disabled' : '' }}>
+                    Tambah ke Keranjang
+                  </button>
+                </div>
               </div>
-              <button type="submit" class="flex-1 bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Tambah ke Keranjang
-              </button>
+            </form>
+          @else
+            <div class="flex-1 p-4 bg-gray-50 rounded-md border border-gray-200">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <i data-lucide="info" class="h-5 w-5 text-gray-400"></i>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-gray-800">Mode Staf Aktif</h3>
+                  <div class="mt-2 text-sm text-gray-600">
+                    <p>Sebagai {{ auth.user.role }}, Anda tidak dapat menggunakan keranjang belanja publik. Silakan gunakan menu <span class="font-semibold capitalize">{{ auth.user.role }}</span> di navigasi atas.</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </form>
+          @endif
         </div>
       </div>
     </div>

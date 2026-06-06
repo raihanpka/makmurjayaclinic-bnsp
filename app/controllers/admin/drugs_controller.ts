@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import app from '@adonisjs/core/services/app'
 import Drug from '#models/drug'
 import DrugCategory from '#models/drug_category'
 import Supplier from '#models/supplier'
@@ -30,8 +31,11 @@ export default class DrugsController {
 
     let imageUrl: string | null = null
     if (payload.image) {
-      await payload.image.moveToDisk('drugs')
-      imageUrl = payload.image.fileName || null
+      const fileName = `${new Date().getTime()}.${payload.image.extname}`
+      await payload.image.move(app.makePath('storage/drugs'), {
+        name: fileName,
+      })
+      imageUrl = `drugs/${fileName}`
     }
 
     await Drug.create({
@@ -79,8 +83,11 @@ export default class DrugsController {
 
     let imageUrl: string | null = drug.imageUrl
     if (payload.image) {
-      await payload.image.moveToDisk('drugs')
-      imageUrl = payload.image.fileName || null
+      const fileName = `${new Date().getTime()}.${payload.image.extname}`
+      await payload.image.move(app.makePath('storage/drugs'), {
+        name: fileName,
+      })
+      imageUrl = `drugs/${fileName}`
     }
 
     await drug.merge({

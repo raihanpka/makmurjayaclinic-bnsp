@@ -1,0 +1,11 @@
+sku,name,description,price,category_id,supplier_id
+TLM-001,Tololak Obat Batuk,Sirup pereda batuk kering dan alergi saluran pernafasan.,24500,2,1
+PRO-001,Promag Tablet,Obat maag dan asam lambung untuk meredakan kembung.,11000,2,1
+SNB-001,Sanmol Paracetamol 500mg,Pereda nyeri dan demam ringan untuk dewasa.,15000,2,2
+BEB-001,Minyak Telon Lang,Minyak telon penghangat bayi dengan aroma menenangkan.,35000,4,3
+OBH-001,OBH Combi Plus,Obat batuk berdahak dan flu komplit.,27000,2,3
+VIT-002,Imboost Force,Suplemen imunomodulator herbal untuk daya tahan tubuh.,55000,3,4
+RXP-001,Cefixime 100mg,Antibiotik cephalosporin untuk infeksi berat.,85000,1,4
+P3K-001,Rivanol Cairan Pembersih,Cairan pembersih luka kompres dan antiseptik ringan.,12500,5,3
+P3K-002,Hansaplast Plester Luka,Plester luka anti air berpori elastis isi 100.,45000,5,1
+RXB-001,Loratadine 10mg,Antihistamin untuk gejala alergi berat.,18000,1,5

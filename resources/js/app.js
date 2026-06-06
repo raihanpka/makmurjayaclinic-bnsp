@@ -17,4 +17,12 @@ Alpine.data('alert', function () {
   }
 })
 
+Alpine.data('cartUpdater', (initialItems) => ({
+  items: initialItems,
+  initialStateStr: JSON.stringify(initialItems),
+  get hasChanges() {
+    return JSON.stringify(this.items) !== this.initialStateStr
+  }
+}))
+
 Alpine.start()

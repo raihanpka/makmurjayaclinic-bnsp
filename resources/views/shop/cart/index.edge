@@ -5,78 +5,96 @@
     @if(cart.items.length > 0)
       <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
         <div class="lg:col-span-7">
-          <ul role="list" class="border-t border-b border-gray-100 divide-y divide-gray-100">
-            @each(item in cart.items)
-              <li class="flex py-6 sm:py-10">
-                <div class="flex-shrink-0">
-                  @if(item.drug.imageUrl)
-                    <img src="{{ item.drug.imageUrl.startsWith('http') ? item.drug.imageUrl : '/uploads/' + item.drug.imageUrl }}" alt="{{ item.drug.name }}" class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48 shadow-sm border border-gray-100">
-                  @else
-                    <div class="w-24 h-24 rounded-md bg-gray-50 flex items-center justify-center text-gray-400 sm:w-48 sm:h-48 border border-gray-100 shadow-sm">
-                      <i data-lucide="image-off" class="h-12 w-12"></i>
-                    </div>
-                  @endif
-                </div>
-
-                <div class="ml-4 flex-1 flex flex-col justify-between sm:ml-6">
-                  <div class="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
-                    <div>
-                      <div class="flex justify-between">
-                        <h3 class="text-sm">
-                          <a href="{{ route('shop_catalog.show', { id: item.drug.id }) }}" class="font-medium text-gray-700 hover:text-gray-800">
-                            {{ item.drug.name }}
-                          </a>
-                        </h3>
-                      </div>
-                      <p class="mt-1 text-sm font-medium text-gray-900">Rp{{ Number(item.drug.price).toLocaleString('id-ID') }}</p>
-                      @if(item.drug.requiresPrescription)
-                        <span class="mt-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                          Perlu Resep
-                        </span>
+          <div x-data="cartUpdater({{ JSON.stringify(cart.items.map(i => ({ id: i.id, quantity: i.quantity }))) }})">
+            <form id="bulk-update-form" action="{{ route('shop_cart.bulk_update') }}" method="POST">
+              {{ csrfField() }}
+              <ul role="list" class="border-t border-b border-gray-100 divide-y divide-gray-100">
+                @each((item, index) in cart.items)
+                  <li class="flex py-6 sm:py-10">
+                    <div class="flex-shrink-0">
+                      @if(item.drug.imageUrl)
+                        <img src="{{ item.drug.imageUrl.startsWith('http') ? item.drug.imageUrl : '/uploads/' + item.drug.imageUrl }}" alt="{{ item.drug.name }}" class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48 shadow-sm border border-gray-100">
+                      @else
+                        <div class="w-24 h-24 rounded-md bg-gray-50 flex items-center justify-center text-gray-400 sm:w-48 sm:h-48 border border-gray-100 shadow-sm">
+                          <i data-lucide="image-off" class="h-12 w-12"></i>
+                        </div>
                       @endif
                     </div>
 
-                    <div class="mt-4 sm:mt-0 sm:pr-9">
-                      <form action="{{ route('shop_cart.update', { id: item.id }, { qs: { _method: 'PATCH' } }) }}" method="POST">
-                        {{ csrfField() }}
-                        <label for="quantity-{{ item.id }}" class="sr-only">Jumlah, {{ item.drug.name }}</label>
-                        <select 
-                          id="quantity-{{ item.id }}" 
-                          name="quantity" 
-                          onchange="this.form.submit()"
-                          class="max-w-full rounded-md border border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        >
-                          @each(i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-                            <option value="{{ i }}" {{ item.quantity == i ? 'selected' : '' }}>{{ i }}</option>
-                          @end
-                        </select>
-                      </form>
+                    <div class="ml-4 flex-1 flex flex-col justify-between sm:ml-6">
+                      <div class="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                        <div>
+                          <div class="flex justify-between">
+                            <h3 class="text-sm">
+                              <a href="{{ route('shop_catalog.show', { id: item.drug.id }) }}" class="font-medium text-gray-700 hover:text-gray-800">
+                                {{ item.drug.name }}
+                              </a>
+                            </h3>
+                          </div>
+                          <p class="mt-1 text-sm font-medium text-gray-900">Rp{{ Number(item.drug.price).toLocaleString('id-ID') }}</p>
+                          @if(item.drug.requiresPrescription)
+                            <span class="mt-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                              Perlu Resep
+                            </span>
+                          @endif
+                        </div>
 
-                      <div class="absolute top-0 right-0">
-                        <form action="{{ route('shop_cart.destroy', { id: item.id }, { qs: { _method: 'DELETE' } }) }}" method="POST">
-                          {{ csrfField() }}
-                          <button type="submit" class="-m-2 p-2 inline-flex text-gray-400 hover:text-gray-500">
-                            <span class="sr-only">Hapus</span>
-                            <i data-lucide="trash-2" class="h-5 w-5 text-gray-400 hover:text-red-500"></i>
-                          </button>
-                        </form>
+                        <div class="mt-4 sm:mt-0 sm:pr-9">
+                          <label for="quantity-{{ item.id }}" class="sr-only">Jumlah, {{ item.drug.name }}</label>
+                          <div class="flex flex-col gap-1 items-start">
+                            <input type="hidden" name="items[{{ index }}][id]" value="{{ item.id }}">
+                            <input 
+                              id="quantity-{{ item.id }}" 
+                              name="items[{{ index }}][quantity]" 
+                              type="number"
+                              min="1"
+                              max="{{ stocks[item.id] }}"
+                              x-model.number="items[{{ index }}].quantity"
+                              class="w-20 rounded-md border border-gray-300 py-1.5 px-3 text-base font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            >
+                            <span class="text-xs text-gray-500">Maks: {{ stocks[item.id] }}</span>
+                          </div>
+
+                          <div class="absolute top-0 right-0">
+                            <button type="submit" form="delete-form-{{ item.id }}" class="-m-2 p-2 inline-flex text-gray-400 hover:text-gray-500">
+                              <span class="sr-only">Hapus</span>
+                              <i data-lucide="trash-2" class="h-5 w-5 text-gray-400 hover:text-red-500"></i>
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <p class="mt-4 flex text-sm text-gray-700 space-x-2">
-                    @if(item.drug.isActive)
-                      <i data-lucide="check-circle-2" class="flex-shrink-0 h-5 w-5 text-green-500"></i>
-                      <span>Tersedia</span>
-                    @else
-                      <i data-lucide="x-circle" class="flex-shrink-0 h-5 w-5 text-red-500"></i>
-                      <span>Stok Habis</span>
-                    @endif
-                  </p>
+                      <p class="mt-4 flex text-sm text-gray-700 space-x-2">
+                        @if(item.drug.isActive)
+                          <i data-lucide="check-circle-2" class="flex-shrink-0 h-5 w-5 text-green-500"></i>
+                          <span>Tersedia</span>
+                        @else
+                          <i data-lucide="x-circle" class="flex-shrink-0 h-5 w-5 text-red-500"></i>
+                          <span>Stok Habis</span>
+                        @endif
+                      </p>
+                    </div>
+                  </li>
+                @end
+              </ul>
+              
+              <div x-show="hasChanges" x-cloak x-transition class="mt-6 bg-indigo-50 border border-indigo-100 rounded-lg p-4 flex items-center justify-between">
+                <div class="text-sm text-indigo-800">
+                  <span class="font-bold">Ada perubahan kuantitas!</span> Jangan lupa simpan perubahan Anda.
                 </div>
-              </li>
-            @end
-          </ul>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md font-medium text-sm shadow-sm transition-colors">
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Delete Forms (outside the bulk update form to prevent nesting) -->
+          @each(item in cart.items)
+            <form id="delete-form-{{ item.id }}" action="{{ route('shop_cart.destroy', { id: item.id }, { qs: { _method: 'DELETE' } }) }}" method="POST" class="hidden">
+              {{ csrfField() }}
+            </form>
+          @end
         </div>
 
         <!-- Order summary -->

@@ -31,19 +31,21 @@
       </div>
       <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
         @if(auth.user)
-          <a href="{{ route('shop_cart.index') }}" class="p-2 text-gray-400 hover:text-gray-500 relative inline-block">
-            <i data-lucide="shopping-cart" class="h-6 w-6"></i>
-            @if(cartItemsCount && cartItemsCount > 0)
-              <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full">
-                {{ cartItemsCount }}
-              </span>
-            @endif
-          </a>
-          
           <div class="flex items-center space-x-4">
-            <a href="{{ route('shop_orders.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-800">
-              Pesanan Saya
-            </a>
+            @if(auth.user.isCustomer)
+              <a href="{{ route('shop_cart.index') }}" class="p-2 text-gray-400 hover:text-gray-500 relative inline-block">
+                <i data-lucide="shopping-cart" class="h-6 w-6"></i>
+                @if(cartItemsCount && cartItemsCount > 0)
+                  <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full">
+                    {{ cartItemsCount }}
+                  </span>
+                @endif
+              </a>
+              
+              <a href="{{ route('shop_orders.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-800">
+                Pesanan Saya
+              </a>
+            @endif
             
             <!-- Notifications Dropdown -->
             <div x-data="notificationsComponent()" x-init="initSSE()" class="relative ml-3">

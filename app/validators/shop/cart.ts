@@ -12,3 +12,14 @@ export const updateCartValidator = vine.compile(
     quantity: vine.number().min(0).max(100),
   })
 )
+
+export const bulkUpdateCartValidator = vine.compile(
+  vine.object({
+    items: vine.array(
+      vine.object({
+        id: vine.number().positive(),
+        quantity: vine.number().min(0)
+      })
+    )
+  })
+)

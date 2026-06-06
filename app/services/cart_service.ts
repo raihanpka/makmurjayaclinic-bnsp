@@ -1,10 +1,15 @@
+import { inject } from '@adonisjs/core'
 import Cart from '#models/cart'
 import CartItem from '#models/cart_item'
 import Drug from '#models/drug'
 import User from '#models/user'
 import db from '@adonisjs/lucid/services/db'
+import StockService from '#services/stock_service'
 
+@inject()
 export default class CartService {
+  constructor(private stockService: StockService) {}
+
   /**
    * Get or create a cart for the user
    */
@@ -25,10 +30,9 @@ export default class CartService {
   async addItem(user: User, drugId: number, quantity: number): Promise<Cart> {
     const cart = await this.getCart(user)
     
-    // Check drug existence and basic stock (detailed check done at checkout via StockService)
     await Drug.findOrFail(drugId)
-    // Note: detailed FIFO stock check is done at checkout, but we can do a quick check here if needed.
-    // For now, just add to cart.
+    
+    const stock = await this.stockService.getSummary(drugId)
     
     await db.transaction(async (trx) => {
       // Lock cart row to prevent concurrent race condition causing duplicate items
@@ -39,8 +43,13 @@ export default class CartService {
         .where('drug_id', drugId)
         .first()
 
+      const newTotal = (existingItem ? existingItem.quantity : 0) + quantity
+      if (newTotal > stock) {
+        throw new Error(`Tidak dapat menambahkan ${quantity} item. Maksimal stok tersedia adalah ${stock}.`)
+      }
+
       if (existingItem) {
-        existingItem.quantity += quantity
+        existingItem.quantity = newTotal
         await existingItem.save()
       } else {
         await CartItem.create({
@@ -66,6 +75,11 @@ export default class CartService {
       .where('id', itemId)
       .where('cart_id', cart.id)
       .firstOrFail()
+
+    const stock = await this.stockService.getSummary(item.drugId)
+    if (quantity > stock) {
+      throw new Error(`Tidak dapat mengubah jumlah menjadi ${quantity}. Maksimal stok tersedia adalah ${stock}.`)
+    }
 
     if (quantity <= 0) {
       await item.delete()

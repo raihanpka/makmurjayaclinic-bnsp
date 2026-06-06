@@ -62,6 +62,7 @@ export type ScannedRoutes = {
     'notifications.read': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'shop_cart.index': { paramsTuple?: []; params?: {} }
     'shop_cart.store': { paramsTuple?: []; params?: {} }
+    'shop_cart.bulk_update': { paramsTuple?: []; params?: {} }
     'shop_cart.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'shop_cart.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'shop_checkout.show': { paramsTuple?: []; params?: {} }
@@ -166,6 +167,7 @@ export type ScannedRoutes = {
     'cashier_counter.store': { paramsTuple?: []; params?: {} }
     'notifications.read': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'shop_cart.store': { paramsTuple?: []; params?: {} }
+    'shop_cart.bulk_update': { paramsTuple?: []; params?: {} }
     'shop_checkout.store': { paramsTuple?: []; params?: {} }
   }
   PUT: {

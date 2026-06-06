@@ -1,6 +1,8 @@
+import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import Drug from '#models/drug'
 import DrugCategory from '#models/drug_category'
+import StockService from '#services/stock_service'
 
 export default class CatalogsController {
   async index({ view, request }: HttpContext) {
@@ -49,14 +51,17 @@ export default class CatalogsController {
     return view.render('shop/catalog/index', { drugs, categories })
   }
 
-  async show({ params, view }: HttpContext) {
+  @inject()
+  async show({ params, view }: HttpContext, stockService: StockService) {
     const drug = await Drug.query()
       .where('id', params.id)
       .where('is_active', true)
       .preload('category')
       .firstOrFail()
 
-    return view.render('shop/catalog/show', { drug })
+    const stock = await stockService.getSummary(drug.id)
+
+    return view.render('shop/catalog/show', { drug, stock })
   }
 
   async search({ request, response }: HttpContext) {
