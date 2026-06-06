@@ -15,10 +15,10 @@
             <h3 class="text-lg font-medium text-gray-900">File Resep</h3>
           </div>
           <div class="p-4">
-            {{-- Assuming we have an endpoint to serve private files or we just show a link --}}
-            <div class="aspect-w-3 aspect-h-4 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
-              <p class="text-gray-500">File Resep: {{ order.prescription.filePath }}</p>
-              {{-- In real app, we would use a controller to serve this private file --}}
+            <div class="bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center p-2">
+              <a href="/uploads/{{ order.prescription.filePath }}" target="_blank" title="Klik untuk memperbesar">
+                <img src="/uploads/{{ order.prescription.filePath }}" alt="Resep" class="max-w-full h-auto max-h-96 object-contain rounded">
+              </a>
             </div>
           </div>
         </div>
@@ -57,11 +57,11 @@
               <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Verifikasi</label>
                 <div class="grid grid-cols-2 gap-4">
-                  <label class="relative flex items-center justify-center px-4 py-3 border rounded-md cursor-pointer focus:outline-none hover:bg-gray-50">
+                  <label class="relative flex items-center justify-center px-4 py-3 border rounded-md cursor-pointer focus:outline-none hover:bg-gray-50 has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-500 has-[:checked]:ring-1 has-[:checked]:ring-indigo-500 transition-all">
                     <input type="radio" name="status" value="approve" class="sr-only" required>
                     <span class="text-sm font-medium text-gray-900">Setujui</span>
                   </label>
-                  <label class="relative flex items-center justify-center px-4 py-3 border rounded-md cursor-pointer focus:outline-none hover:bg-gray-50">
+                  <label class="relative flex items-center justify-center px-4 py-3 border rounded-md cursor-pointer focus:outline-none hover:bg-gray-50 has-[:checked]:bg-red-50 has-[:checked]:border-red-500 has-[:checked]:ring-1 has-[:checked]:ring-red-500 transition-all">
                     <input type="radio" name="status" value="reject" class="sr-only" required>
                     <span class="text-sm font-medium text-gray-900">Tolak</span>
                   </label>

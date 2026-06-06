@@ -122,8 +122,7 @@ Setelah melakukan *seeding*, Anda dapat login menggunakan kredensial berikut (se
 | **Admin** | `admin@makmurjaya.id` |
 | **Apoteker** | `apoteker@makmurjaya.id` |
 | **Kasir** | `kasir@makmurjaya.id` |
-| **Pelanggan** | `johndoe@example.com` |
-
+| **Pelanggan** | `raihanpekka@gmail.com` |
 ---
 
 ### Mac

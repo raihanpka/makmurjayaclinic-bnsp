@@ -134,7 +134,10 @@
                 </div>
               @endif
 
-              <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium">Lihat Resep yang Diunggah</a>
+              <a href="/uploads/{{ order.prescription.filePath }}" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium inline-flex items-center">
+                <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+                Lihat Resep yang Diunggah
+              </a>
             </div>
           </div>
         @endif
