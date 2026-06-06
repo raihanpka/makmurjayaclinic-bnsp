@@ -11,7 +11,7 @@ export default class CategoriesController {
     // Setting pagination base URL
     categories.baseUrl('/admin/categories')
 
-    return view.render('admin_categories.index', { categories })
+    return view.render('admin/categories/index', { categories })
   }
 
   async create({ view }: HttpContext) {

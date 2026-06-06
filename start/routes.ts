@@ -13,7 +13,15 @@ import { middleware } from '#start/kernel'
 const SessionsController = () => import('#controllers/auth/sessions_controller')
 const RegisteredUsersController = () => import('#controllers/auth/registered_users_controller')
 
-router.get('/', async ({ view }) => {
+router.get('/', async ({ response, auth, view }) => {
+  await auth.check()
+  if (auth.isAuthenticated) {
+    const role = auth.user!.role
+    if (role === 'admin') return response.redirect().toRoute('admin.dashboard')
+    if (role === 'pharmacist') return response.redirect().toRoute('pharmacy_prescriptions.index')
+    if (role === 'cashier') return response.redirect().toRoute('cashier_counter.create')
+    if (role === 'customer') return response.redirect().toRoute('shop_catalog.index')
+  }
   return view.render('welcome')
 }).as('home')
 

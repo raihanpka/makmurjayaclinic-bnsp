@@ -10,7 +10,7 @@ export default class SuppliersController {
     
     suppliers.baseUrl('/admin/suppliers')
 
-    return view.render('admin_suppliers.index', { suppliers })
+    return view.render('admin/suppliers/index', { suppliers })
   }
 
   async create({ view }: HttpContext) {

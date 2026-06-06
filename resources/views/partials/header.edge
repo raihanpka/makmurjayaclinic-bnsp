@@ -9,22 +9,34 @@
           </a>
         </div>
         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-          <a href="{{ route('shop_catalog.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-            Katalog
-          </a>
-          @if(auth.user?.isAdmin)
-            <a href="{{ route('admin.dashboard') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-              Admin
+          @if(!auth.user || auth.user.isCustomer)
+            <a href="{{ route('shop_catalog.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Katalog
             </a>
           @endif
+          
+          @if(auth.user?.isAdmin)
+            <a href="{{ route('admin.dashboard') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Dasbor</a>
+            <a href="{{ route('admin_drugs.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Obat</a>
+            <a href="{{ route('admin_categories.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Kategori</a>
+            <a href="{{ route('admin_suppliers.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Supplier</a>
+            <a href="{{ route('admin_customers.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Pelanggan</a>
+            <a href="{{ route('admin_reports.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Laporan</a>
+            <a href="{{ route('admin_audit_logs.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Log</a>
+          @endif
+          
           @if(auth.user?.isPharmacist)
             <a href="{{ route('pharmacy_prescriptions.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-              Farmasi
+              Verifikasi Resep
             </a>
           @endif
+          
           @if(auth.user?.isCashier)
             <a href="{{ route('cashier_counter.create') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-              Kasir
+              Penjualan Counter
+            </a>
+            <a href="{{ route('cashier_payments.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Konfirmasi Pembayaran
             </a>
           @endif
         </div>
