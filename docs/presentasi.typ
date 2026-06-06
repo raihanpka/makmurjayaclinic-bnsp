@@ -98,6 +98,12 @@
   *Alur Web:* Klien $arrow$ _Router_ $arrow$ _Controller_ $arrow$ _Model / Services_ $arrow$ _DB_ $arrow$ _View_ $arrow$ Layar
 ]
 
+== Visualisasi Relasi Basis Data (ERD)
+
+#align(center)[
+  #image("erd.png", fit: "contain", height: 80%)
+]
+
 = Metodologi Keamanan & Infrastruktur
 
 == Mengapa Memilih SSE Ketimbang WebSockets?
@@ -127,8 +133,7 @@ Sistem memecahkan problematika _Race Condition_ (Galat sistem tatkala dua pembel
 == Visualisasi Arsitektur & Topologi
 
 #align(center)[
-  // #image("diagram-architecture.png", fit: "contain", width: 85%)
-  [Gambar Diagram Arsitektur (Mohon letakkan kembali file diagram-architecture.png di dalam folder docs)]
+  #image("diagram-architecture.png", fit: "contain", width: 85%)
 ]
 
 == Topologi Deployment Sekali Jalan (All-in-One)

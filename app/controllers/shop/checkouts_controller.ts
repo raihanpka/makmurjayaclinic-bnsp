@@ -11,9 +11,13 @@ export default class CheckoutsController {
     private readonly orderService: OrderService
   ) {}
 
-  async show({ view, auth }: HttpContext) {
+  async show({ view, auth, response }: HttpContext) {
     const user = auth.user!
     const cart = await this.cartService.getCart(user)
+    
+    if (cart.items.length === 0) {
+      return response.redirect().toRoute('shop_catalog.index')
+    }
     const total = this.cartService.calculateTotal(cart)
     const requiresPrescription = cart.items.some(item => item.drug.requiresPrescription)
 

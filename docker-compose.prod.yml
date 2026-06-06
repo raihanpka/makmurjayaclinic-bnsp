@@ -18,6 +18,8 @@ services:
       - DB_DATABASE=${DB_DATABASE:-clinic_bnsp}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - QUEUE_REDIS_HOST=redis
+      - QUEUE_REDIS_PORT=6379
       - CACHE_VIEWS=true
     ports:
       - "3333:3333"
@@ -46,6 +48,8 @@ services:
       - DB_DATABASE=${DB_DATABASE:-clinic_bnsp}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - QUEUE_REDIS_HOST=redis
+      - QUEUE_REDIS_PORT=6379
     depends_on:
       app:
         condition: service_started
