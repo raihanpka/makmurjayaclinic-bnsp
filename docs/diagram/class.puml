@@ -1,0 +1,105 @@
+@startuml ClassDiagram
+skinparam classAttributeIconSize 0
+
+package "Models (Entities)" {
+  class User {
+    +id: number
+    +email: string
+    +fullName: string
+    +role: string
+    +isAdmin(): boolean
+    +isCustomer(): boolean
+    +isPharmacist(): boolean
+    +isCashier(): boolean
+  }
+
+  class Drug {
+    +id: number
+    +sku: string
+    +name: string
+    +price: number
+    +minStock: number
+    +requiresPrescription: boolean
+    +imageUrl: string
+  }
+
+  class DrugCategory {
+    +id: number
+    +name: string
+  }
+
+  class Order {
+    +id: number
+    +status: string
+    +totalPrice: number
+    +userId: number
+  }
+
+  class OrderItem {
+    +id: number
+    +orderId: number
+    +drugId: number
+    +quantity: number
+    +priceAtSale: number
+  }
+
+  class Prescription {
+    +id: number
+    +orderId: number
+    +filePath: string
+    +status: string
+    +pharmacistNotes: string
+  }
+
+  class Payment {
+    +id: number
+    +orderId: number
+    +method: string
+    +status: string
+    +amount: number
+  }
+}
+
+package "Services (Business Logic)" {
+  class CartService {
+    +getCart(user: User): Cart
+    +addItem(user: User, drugId: number, qty: number)
+    +updateItem(user: User, itemId: number, qty: number)
+    +bulkUpdate(user: User, updates: any[])
+    +calculateTotal(cart: Cart): number
+  }
+
+  class OrderService {
+    +createFromCart(user: User, paymentMethod: string, prescriptionPath?: string): Order
+    +cancelOrder(orderId: number)
+  }
+
+  class PrescriptionService {
+    +verify(orderId: number, approved: boolean, notes?: string): Order
+    +getPending(): Order[]
+  }
+
+  class PaymentService {
+    +confirmPayment(orderId: number): Order
+    +getPendingPayments(): Order[]
+  }
+
+  class StockService {
+    +getAvailableStock(drugId: number): number
+    +deductFromSale(drugId: number, qty: number, orderId: number)
+    +addStock(drugId: number, batchNumber: string, qty: number)
+  }
+}
+
+User "1" -- "*" Order : places
+Order "1" *-- "*" OrderItem : contains
+Order "1" o-- "0..1" Prescription : needs
+Order "1" o-- "0..1" Payment : uses
+DrugCategory "1" o-- "*" Drug : organizes
+OrderItem "*" -- "1" Drug : refers to
+
+CartService ..> OrderService : "Checkout process"
+OrderService ..> StockService : "Deduct stock"
+PrescriptionService ..> OrderService : "Update status"
+PaymentService ..> StockService : "Finalize stock cut"
+@enduml

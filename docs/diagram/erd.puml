@@ -1,0 +1,158 @@
+@startuml ERD
+!define Table(name,desc) entity name as "desc" << (T,#FFAAAA) >>
+!define primary_key(x) <b>x</b>
+!define foreign_key(x) <i>x</i>
+
+hide circle
+skinparam linetype ortho
+
+Table(users, "users") {
+  primary_key(id) : integer
+  email : string
+  password : string
+  full_name : string
+  role : string
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(categories, "drug_categories") {
+  primary_key(id) : integer
+  name : string
+  description : string
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(suppliers, "suppliers") {
+  primary_key(id) : integer
+  name : string
+  address : string
+  contact : string
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(drugs, "drugs") {
+  primary_key(id) : integer
+  foreign_key(category_id) : integer
+  foreign_key(supplier_id) : integer
+  sku : string
+  name : string
+  description : string
+  price : decimal
+  min_stock : integer
+  requires_prescription : boolean
+  image_url : string
+  composition : string
+  dosage : string
+  side_effects : string
+  is_active : boolean
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(batches, "drug_batches") {
+  primary_key(id) : integer
+  foreign_key(drug_id) : integer
+  batch_number : string
+  quantity : integer
+  expires_at : timestamp
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(carts, "carts") {
+  primary_key(id) : integer
+  foreign_key(user_id) : integer
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(cart_items, "cart_items") {
+  primary_key(id) : integer
+  foreign_key(cart_id) : integer
+  foreign_key(drug_id) : integer
+  quantity : integer
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(orders, "orders") {
+  primary_key(id) : integer
+  foreign_key(user_id) : integer
+  status : string
+  total_price : decimal
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(order_items, "order_items") {
+  primary_key(id) : integer
+  foreign_key(order_id) : integer
+  foreign_key(drug_id) : integer
+  quantity : integer
+  price_at_sale : decimal
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(prescriptions, "prescriptions") {
+  primary_key(id) : integer
+  foreign_key(order_id) : integer
+  file_path : string
+  status : string
+  pharmacist_notes : string
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(payments, "payments") {
+  primary_key(id) : integer
+  foreign_key(order_id) : integer
+  method : string
+  amount : decimal
+  status : string
+  proof_path : string
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+Table(movements, "stock_movements") {
+  primary_key(id) : integer
+  foreign_key(drug_id) : integer
+  foreign_key(order_id) : integer
+  type : string
+  quantity : integer
+  description : string
+  created_at : timestamp
+}
+
+Table(notifications, "notifications") {
+  primary_key(id) : integer
+  foreign_key(user_id) : integer
+  title : string
+  message : text
+  link : string
+  type : string
+  is_read : boolean
+  created_at : timestamp
+}
+
+users ||--o{ orders : places
+users ||--o| carts : has
+users ||--o{ notifications : receives
+
+categories ||--o{ drugs : categorizes
+suppliers ||--o{ drugs : supplies
+drugs ||--o{ batches : has
+drugs ||--o{ cart_items : added to
+drugs ||--o{ order_items : ordered in
+drugs ||--o{ movements : tracked by
+
+carts ||--o{ cart_items : contains
+orders ||--o{ order_items : contains
+orders ||--o| prescriptions : requires
+orders ||--o| payments : paid via
+orders ||--o{ movements : triggers
+@enduml

@@ -4,6 +4,7 @@ import Drug from '#models/drug'
 import DrugCategory from '#models/drug_category'
 import Supplier from '#models/supplier'
 import { createDrugValidator, updateDrugValidator } from '#validators/admin/drug'
+import { DateTime } from 'luxon'
 
 export default class DrugsController {
   async index({ view, request }: HttpContext) {
@@ -12,6 +13,9 @@ export default class DrugsController {
     const drugs = await Drug.query()
       .preload('category')
       .preload('supplier')
+      .preload('batches', (q) => {
+        q.where('expires_at', '>', DateTime.now().toSQL()!)
+      })
       .orderBy('id', 'desc')
       .paginate(page, limit)
     
@@ -113,10 +117,13 @@ export default class DrugsController {
   async destroy({ params, response, session }: HttpContext) {
     const drug = await Drug.findOrFail(params.id)
     
-    // We should be careful about deleting if there are active batches/orders
-    await drug.delete()
+    try {
+      await drug.delete()
+      session.flash('success', 'Obat berhasil dihapus.')
+    } catch (error) {
+      session.flash('error', 'Gagal menghapus obat. Obat ini mungkin sedang digunakan dalam pesanan atau riwayat stok.')
+    }
 
-    session.flash('success', 'Obat berhasil dihapus.')
     return response.redirect().toRoute('admin_drugs.index')
   }
 }

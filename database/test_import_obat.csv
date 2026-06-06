@@ -1,11 +1,11 @@
-sku,name,description,price,category_id,supplier_id
-TLM-001,Tololak Obat Batuk,Sirup pereda batuk kering dan alergi saluran pernafasan.,24500,2,1
-PRO-001,Promag Tablet,Obat maag dan asam lambung untuk meredakan kembung.,11000,2,1
-SNB-001,Sanmol Paracetamol 500mg,Pereda nyeri dan demam ringan untuk dewasa.,15000,2,2
-BEB-001,Minyak Telon Lang,Minyak telon penghangat bayi dengan aroma menenangkan.,35000,4,3
-OBH-001,OBH Combi Plus,Obat batuk berdahak dan flu komplit.,27000,2,3
-VIT-002,Imboost Force,Suplemen imunomodulator herbal untuk daya tahan tubuh.,55000,3,4
-RXP-001,Cefixime 100mg,Antibiotik cephalosporin untuk infeksi berat.,85000,1,4
-P3K-001,Rivanol Cairan Pembersih,Cairan pembersih luka kompres dan antiseptik ringan.,12500,5,3
-P3K-002,Hansaplast Plester Luka,Plester luka anti air berpori elastis isi 100.,45000,5,1
-RXB-001,Loratadine 10mg,Antihistamin untuk gejala alergi berat.,18000,1,5
+sku,name,description,composition,dosage,side_effects,requires_prescription,price,category_id,supplier_id,min_stock,stok
+TLM-001,Tololak Obat Batuk,Sirup pereda batuk kering dan alergi saluran pernafasan.,Dextromethorphan HBr 15mg,1 sendok takar (5ml) 3x sehari,Mengantuk,false,24500,2,1,10,50
+PRO-001,Promag Tablet,Obat maag dan asam lambung untuk meredakan kembung.,Hydrotalcite 200mg,1-2 tablet dikunyah sebelum makan,Sembelit ringan,false,11000,2,1,20,100
+SNB-001,Sanmol Paracetamol 500mg,Pereda nyeri dan demam ringan untuk dewasa.,Paracetamol 500mg,1 tablet 3-4x sehari,Reaksi alergi (jarang),false,15000,2,2,15,75
+BEB-001,Minyak Telon Lang,Minyak telon penghangat bayi dengan aroma menenangkan.,Oleum Cajuputi 30%,Oleskan secukupnya,Iritasi kulit ringan,false,35000,4,3,10,30
+OBH-001,OBH Combi Plus,Obat batuk berdahak dan flu komplit.,Succus Liquiritiae 167mg,3 sendok takar 3x sehari,Mengantuk dan mulut kering,false,27000,2,3,10,40
+VIT-002,Imboost Force,Suplemen imunomodulator herbal untuk daya tahan tubuh.,Echinacea Purpurea 250mg,1 kaplet 1-2x sehari,Gangguan pencernaan ringan,false,55000,3,4,10,60
+RXP-001,Cefixime 100mg,Antibiotik cephalosporin untuk infeksi berat.,Cefixime Trihydrate 100mg,1 kapsul 2x sehari,Diare dan mual,true,85000,1,4,5,15
+P3K-001,Rivanol Cairan Pembersih,Cairan pembersih luka kompres dan antiseptik ringan.,Ethacridine lactate 0.1%,Gunakan secukupnya pada kapas,Iritasi lokal,false,12500,5,3,5,25
+P3K-002,Hansaplast Plester Luka,Plester luka anti air berpori elastis isi 100.,Kain elastis berperekat,Ganti setiap hari,Alergi plester,false,45000,5,1,10,100
+RXB-001,Loratadine 10mg,Antihistamin untuk gejala alergi berat.,Loratadine 10mg,1 tablet 1x sehari,Mulut kering,true,18000,1,5,10,45

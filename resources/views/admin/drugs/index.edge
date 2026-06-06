@@ -1,5 +1,5 @@
 @component('layouts/app')
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ isImportOpen: false }">
     <div class="sm:flex sm:items-center sm:justify-between mb-8">
       <div>
         <h1 class="text-3xl font-bold text-gray-900">Manajemen Obat</h1>
@@ -8,7 +8,7 @@
       <div class="mt-4 sm:mt-0 flex space-x-3">
         <button 
           type="button"
-          @click="$dispatch('open-import-modal')"
+          @click="isImportOpen = true"
           class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         >
           Import CSV/Excel
@@ -30,6 +30,7 @@
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Obat</th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stok</th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th scope="col" class="relative px-6 py-3">
                     <span class="sr-only">Aksi</span>
@@ -63,6 +64,12 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       Rp{{ Number(drug.price).toLocaleString('id-ID') }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      @let(stock = drug.batches ? drug.batches.reduce((sum, b) => sum + b.quantity, 0) : 0)
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ stock <= drug.minStock ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                        {{ stock }}
+                      </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ drug.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -99,17 +106,15 @@
 
     <!-- Import Modal (Simplified implementation with Alpine.js) -->
     <div 
-      x-data="{ isOpen: false }" 
-      @open-import-modal.window="isOpen = true"
-      x-show="isOpen" 
+      x-show="isImportOpen" 
       class="fixed inset-0 z-50 overflow-y-auto" 
       style="display: none;"
     >
       <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="isOpen = false">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="isImportOpen = false">
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
-        <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+        <div class="relative z-10 inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
           <form action="{{ route('admin_drugs.import') }}" method="POST" enctype="multipart/form-data">
             {{ csrfField() }}
             <div>
