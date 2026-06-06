@@ -44,6 +44,19 @@
   #emph[Membangun ekosistem e-commerce untuk mempermudah transaksi daring, integrasi POS _offline_, dan automasi pengawasan stok obat.]
 ]
 
+== Analisa Kesenjangan (Gap Analysis)
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  inset: 8pt,
+  align: left,
+  stroke: 0.5pt + gray,
+  [*Kondisi Real (Sistem Lama)*], [*Kebutuhan (Permasalahan)*], [*Implementasi (Justifikasi Developer)*],
+  [Pencatatan resep kertas yang menumpuk & sering hilang.], [Sistem pengarsipan digital untuk validasi medis.], [Pembuatan Modul *E-Prescription* dengan validasi silang oleh hak akses Apoteker.],
+  [Kasir manual, stok dihitung fisik tiap akhir bulan.], [Otomatisasi pengurangan inventaris setiap terjadi penjualan.], [Integrasi *Synchronous DB Transaction* (POS & Web) untuk pemotongan stok _real-time_.],
+  [Pemantauan obat kedaluwarsa (Expired) murni manual.], [Peringatan sistem sebelum masa berlaku obat habis.], [Relasi *DrugBatches* dengan algoritma FIFO dan sistem *Notifikasi Alarm Stok* otomatis.]
+)
+
 == Solusi & Fitur Cerdas
 
 - *Manajemen Inventaris Berbasis Waktu*: Mengadopsi algoritma _First-In-First-Out (FIFO)_ dengan pelacakan waktu kedaluwarsa secara mandiri per-_batch_ produksi.
@@ -98,12 +111,6 @@
   *Alur Web:* Klien $arrow$ _Router_ $arrow$ _Controller_ $arrow$ _Model / Services_ $arrow$ _DB_ $arrow$ _View_ $arrow$ Layar
 ]
 
-== Visualisasi Relasi Basis Data (ERD)
-
-#align(center)[
-  #image("erd.png", fit: "contain", height: 80%)
-]
-
 = Metodologi Keamanan & Infrastruktur
 
 == Mengapa Memilih SSE Ketimbang WebSockets?
@@ -130,13 +137,41 @@ Sistem memecahkan problematika _Race Condition_ (Galat sistem tatkala dua pembel
 2. *Synchronous Database Transaction*: Pemotongan jumlah (_Quantity_) dilakukan berbarengan *secara absolut* dengan pencatatan nota pesanan via blok pengaman `db.transaction()`.
 3. *Auto-Rollback*: Mengembalikan kondisi nominal ke awal apabila terdeteksi anomali di tengah skenario.
 
-== Visualisasi Arsitektur & Topologi
+== Visualisasi Use Case Diagram
+#align(center)[
+  #image("usecase.png", fit: "contain", width: 100%)
+]
+
+== Visualisasi Relasi Basis Data (ERD)
+
+#align(center)[
+  #image("erd.png", fit: "contain", height: 80%)
+]
+
+== Visualisasi Class Diagram
+#align(center)[
+  #image("class.png", fit: "contain", width: 100%)
+]
+
+== Pratinjau Mockup UI (Dasbor Admin)
+
+#align(center)[
+  #image("mockup/dashboard.png", fit: "contain", height: 85%)
+]
+
+== Pratinjau Mockup UI (Kasir / POS)
+
+#align(center)[
+  #image("mockup/kasir.png", fit: "contain", height: 85%)
+]
+
+== Rancangan Sistem Arsitektur
 
 #align(center)[
   #image("diagram-architecture.png", fit: "contain", width: 85%)
 ]
 
-== Topologi Deployment Sekali Jalan (All-in-One)
+== Topologi Sistem Deployment
 
 Seluruh ekosistem layanan digabungkan ke dalam 1 bundel rapi lewat konfigurasi `docker-compose.prod.yml`.
 

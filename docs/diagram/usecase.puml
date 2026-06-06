@@ -1,0 +1,63 @@
+@startuml UseCaseDiagram
+left to right direction
+
+' Styling to resemble clean Draw.io diagrams
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor LightCyan
+  BorderColor DarkCyan
+}
+skinparam actor {
+  BackgroundColor White
+  BorderColor Black
+}
+
+actor "Customer\n(Pelanggan)" as Customer
+actor "Cashier\n(Kasir)" as Cashier
+actor "Pharmacist\n(Apoteker)" as Pharmacist
+actor "Admin\n(Administrator)" as Admin
+
+rectangle "Makmur Jaya Pharmacy System" {
+  
+  usecase "Register & Login" as UC_Login
+  usecase "Lihat & Cari Katalog Obat" as UC_Katalog
+  usecase "Kelola Keranjang Belanja" as UC_Cart
+  usecase "Checkout & Pembayaran" as UC_Checkout
+  usecase "Unggah Resep Dokter" as UC_UploadResep
+  usecase "Lihat Riwayat Pesanan" as UC_History
+  
+  usecase "Penjualan Counter (POS)" as UC_POS
+  usecase "Konfirmasi Pembayaran Online" as UC_ConfirmPayment
+  
+  usecase "Verifikasi Resep Dokter" as UC_VerifyResep
+  
+  usecase "Manajemen Obat & Import" as UC_ManageDrug
+  usecase "Manajemen Kategori & Supplier" as UC_ManageCat
+  usecase "Lihat Laporan Penjualan" as UC_Reports
+  usecase "Lihat Log Sistem & Notifikasi" as UC_Logs
+}
+
+Customer --> UC_Login
+Customer --> UC_Katalog
+Customer --> UC_Cart
+Customer --> UC_Checkout
+Customer --> UC_History
+
+Cashier --> UC_Login
+Cashier --> UC_POS
+Cashier --> UC_ConfirmPayment
+
+Pharmacist --> UC_Login
+Pharmacist --> UC_Katalog
+Pharmacist --> UC_VerifyResep
+
+Admin --> UC_Login
+Admin --> UC_ManageDrug
+Admin --> UC_ManageCat
+Admin --> UC_Reports
+Admin --> UC_Logs
+
+UC_Checkout ..> UC_UploadResep : <<extends>>
+UC_VerifyResep ..> UC_UploadResep : <<includes>>
+
+@enduml
