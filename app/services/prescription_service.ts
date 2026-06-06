@@ -33,7 +33,11 @@ export default class PrescriptionService {
     })
 
     // Send notification
-    await mail.send(new OrderStatusUpdatedNotification(order))
+    try {
+      await mail.send(new OrderStatusUpdatedNotification(order))
+    } catch (error) {
+      console.error('Gagal mengirim email notifikasi:', error.message)
+    }
 
     return order
   }

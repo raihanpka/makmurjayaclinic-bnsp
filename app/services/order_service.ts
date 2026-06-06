@@ -129,7 +129,11 @@ export default class OrderService {
     })
 
     // Send notification
-    await mail.send(new OrderStatusUpdatedNotification(order))
+    try {
+      await mail.send(new OrderStatusUpdatedNotification(order))
+    } catch (error) {
+      console.error('Gagal mengirim email notifikasi:', error.message)
+    }
 
     // Dispatch background job for further processing (if any other heavy tasks exist)
     await queue.dispatch(ProcessOrderJob, { orderId: order.id })
